@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import ShadowPreview from '../common/ShadowPreview.jsx';
+import CodeBlock from '../common/CodeBlock.jsx';
 import TagButtons from '../master/TagButtons.jsx';
 import HintBox from '../common/HintBox.jsx';
 import ResultPanel from '../common/ResultPanel.jsx';
-import { insertTag, exitTag } from '../../engine/editorOps.js';
+import { insertTag, exitTag, splitStarterCursor } from '../../engine/editorOps.js';
 import { judge } from '../../engine/judge.js';
 import { judgeCss } from '../../engine/cssJudge.js';
 import { voiceFor } from '../../engine/voice.js';
@@ -26,7 +27,9 @@ function examParts(scene) {
 // Общий блок: задание + эталон/превью + редактор (textarea) + подсказки.
 // allowHints=false — на экзамене (бесплатных подсказок там нет, покупка за монеты — шаг 10).
 function Editor({ workbenchKey, task, mode, memory, masterName, allowHints, disabled, onResult, successLabel, onAdvance }) {
-  const initialDraft = memory.getDraft(workbenchKey) ?? task.starter;
+  const hasDraft = memory.getDraft(workbenchKey) !== undefined;
+  const { text: starterText, cursor: starterCursor } = splitStarterCursor(task.starter);
+  const initialDraft = memory.getDraft(workbenchKey) ?? starterText;
   const [code, setCode] = useState(initialDraft);
   const [hintsUsed, setHintsUsed] = useState(memory.getHints(workbenchKey) ?? 0);
   const [status, setStatus] = useState('idle'); // idle | bad | ok
@@ -36,6 +39,12 @@ function Editor({ workbenchKey, task, mode, memory, masterName, allowHints, disa
   useEffect(() => {
     const ta = taRef.current;
     if (!ta) return;
+    // Заготовка задания: при первом открытии (нет сохранённого черновика) курсор
+    // встаёт на маркер из starter (если он там есть) — например, внутрь { }.
+    if (!hasDraft) {
+      ta.setSelectionRange(starterCursor, starterCursor);
+      ta.focus();
+    }
     const handler = () => {
       const v = ta.value;
       setCode(v);
@@ -45,6 +54,7 @@ function Editor({ workbenchKey, task, mode, memory, masterName, allowHints, disa
     };
     ta.addEventListener('input', handler);
     return () => ta.removeEventListener('input', handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workbenchKey, memory]);
 
   function handleCheck() {
@@ -70,6 +80,7 @@ function Editor({ workbenchKey, task, mode, memory, masterName, allowHints, disa
   return (
     <div className="flex flex-col gap-3">
       <p className="text-[15px] m-0">{task.task}</p>
+      {mode === 'css' && <CodeBlock code={task.target} />}
       <div className="grid grid-cols-2 gap-2">
         {mode === 'css' ? (
           <>

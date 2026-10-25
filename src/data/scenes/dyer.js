@@ -1,6 +1,7 @@
 import { ART } from '../artAssets.js';
 import { needOne, needClass, needParagraphWithBold } from '../../engine/textRules.js';
 import { needColor, needFontFamily } from '../../engine/cssJudge.js';
+import { CURSOR_MARK } from '../../engine/editorOps.js';
 import { ECONOMY } from '../economyConfig.js';
 
 // Сцена 2 «Красильня». Шрифт в экзамене пока обычный (sans-serif) — пиксельный
@@ -53,9 +54,9 @@ export default {
 
   training: [
     {
-      task: 'Покрась заголовок «Чайная»: .tea-title { color: ...; } — сделай текст охряным (#b45309).',
+      task: 'Покрась заголовок «Чайная» такими значениями:',
       html: '<h1 class="tea-title">Чайная</h1>',
-      starter: '',
+      starter: '.tea-title {\n  ' + CURSOR_MARK + '\n}',
       target: '.tea-title {\n  color: #b45309;\n}',
       hints: [
         'Селектор начинается с точки: .tea-title',
@@ -65,9 +66,9 @@ export default {
       rule: (wrapper) => needColor(wrapper, '.tea-title', 'color', '#b45309', 'цвет текста'),
     },
     {
-      task: 'Теперь фон: .leather-title { background: ...; } — сделай фон тёмно-коричневым (#5b3a21).',
+      task: 'Теперь фон для «Кожевни» такими значениями:',
       html: '<h1 class="leather-title">Кожевня</h1>',
-      starter: '',
+      starter: '.leather-title {\n  ' + CURSOR_MARK + '\n}',
       target: '.leather-title {\n  background: #5b3a21;\n}',
       hints: [
         'Свойство для фона — background (или background-color).',
@@ -77,10 +78,9 @@ export default {
       rule: (wrapper) => needColor(wrapper, '.leather-title', 'backgroundColor', '#5b3a21', 'фон'),
     },
     {
-      task:
-        'Собери всё вместе для «Пряностей»: .spice-title { color: #ffffff; background: #b91c1c; font-family: sans-serif; }',
+      task: 'Собери всё вместе для «Пряностей» такими значениями:',
       html: '<h1 class="spice-title">Пряности</h1>',
-      starter: '',
+      starter: '.spice-title {\n  ' + CURSOR_MARK + '\n}',
       target: '.spice-title {\n  color: #ffffff;\n  background: #b91c1c;\n  font-family: sans-serif;\n}',
       hints: [
         'Три свойства в одних фигурных скобках, каждое на своей строке с точкой с запятой.',
@@ -108,7 +108,7 @@ export default {
         needParagraphWithBold(body, 'Всё для жителей Города Кода', 'Города Кода'),
     },
     css: {
-      task: 'Одень вывеску: .hero-title { color: #14b8a6; background: #1e293b; font-family: sans-serif; }',
+      task: 'Одень вывеску такими значениями:',
       html: '<h1 class="hero-title">Торг-Хаб</h1>\n<p>Всё для жителей <b>Города Кода</b></p>',
       starter: '',
       target: '.hero-title {\n  color: #14b8a6;\n  background: #1e293b;\n  font-family: sans-serif;\n}',

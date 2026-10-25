@@ -1,3 +1,5 @@
+import CodeBlock from './CodeBlock.jsx';
+
 export default function HintBox({ hints, used }) {
   if (!used) return null;
   return (
@@ -6,7 +8,9 @@ export default function HintBox({ hints, used }) {
         n === 2 ? (
           <div className="bg-ember-soft text-ink px-2.5 py-2 text-sm" key={n}>
             <b>Решение:</b>
-            <pre className="mt-1.5 font-mono text-sm leading-normal whitespace-pre-wrap">{hints[2]}</pre>
+            <div className="mt-1.5">
+              <CodeBlock code={hints[2]} />
+            </div>
           </div>
         ) : (
           <div className="bg-ember-soft text-ink px-2.5 py-2 text-sm" key={n}>

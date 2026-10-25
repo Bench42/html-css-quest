@@ -1,3 +1,15 @@
+// Маркер места курсора в task.starter: при первом открытии задания курсор встаёт
+// сюда, сам символ убирается. Нет маркера в starter — курсор просто в конце текста.
+// Так заготовку (например «.имя { | }») можно включать/выключать настройкой данных,
+// без правок кода редактора.
+export const CURSOR_MARK = '\u0001';
+
+export function splitStarterCursor(starter) {
+  const idx = starter.indexOf(CURSOR_MARK);
+  if (idx === -1) return { text: starter, cursor: starter.length };
+  return { text: starter.slice(0, idx) + starter.slice(idx + CURSOR_MARK.length), cursor: idx };
+}
+
 export function insertTag(ta, name) {
   const s = ta.selectionStart;
   const e = ta.selectionEnd;
