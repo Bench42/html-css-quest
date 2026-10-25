@@ -9,12 +9,9 @@ import { voiceFor } from '../../engine/voice.js';
 
 const HTML_TAGS = ['h1', 'p', 'b'];
 
-// Пока на HTML-вкладке живёт только первое тренировочное задание сцены 1 (шаг 7).
-// Остальные тренировки, экзамен и переключение по циклу сцены — шаг 8.
-function HtmlTraining({ scene, memory }) {
-  const task = scene.training[0];
-  const workbenchKey = scene.id + '-training-0';
-
+// Общий блок: задание + эталон/превью + textarea + кнопки тегов + подсказки.
+// allowHints=false — на экзамене (бесплатных подсказок там нет, покупка за монеты — шаг 10).
+function Editor({ workbenchKey, task, memory, masterName, allowHints, disabled, onResult, successLabel, onAdvance }) {
   const initialDraft = memory.getDraft(workbenchKey) ?? task.starter;
   const [code, setCode] = useState(initialDraft);
   const [hintsUsed, setHintsUsed] = useState(memory.getHints(workbenchKey) ?? 0);
@@ -41,10 +38,12 @@ function HtmlTraining({ scene, memory }) {
     if (msg) {
       setStatus('bad');
       setBadInfo({ message: msg, voice: voiceFor(msg) });
+      onResult && onResult(false);
       return;
     }
     setStatus('ok');
     setBadInfo(null);
+    onResult && onResult(true);
   }
 
   function addHint() {
@@ -70,30 +69,134 @@ function HtmlTraining({ scene, memory }) {
         aria-label="Код"
         placeholder="Тапни тег под полем, например <h1>"
         defaultValue={code}
-        className="block w-full min-h-[132px] resize-y font-mono text-base bg-gray-100 p-2"
+        disabled={disabled}
+        className="block w-full min-h-[132px] resize-y font-mono text-base bg-gray-100 p-2 disabled:opacity-60"
       />
       <TagButtons tags={HTML_TAGS} onInsert={(name) => insertTag(taRef.current, name)} onExit={() => exitTag(taRef.current)} />
       <div className="flex gap-2">
-        <button type="button" onClick={handleCheck} className="flex-[2] min-h-10 bg-gray-800 text-white cursor-pointer">
-          Проверить
-        </button>
         <button
           type="button"
-          onClick={addHint}
-          disabled={hintsUsed >= task.hints.length}
-          className="flex-1 min-h-10 bg-gray-200 cursor-pointer disabled:opacity-50"
+          onClick={handleCheck}
+          disabled={disabled}
+          className="flex-[2] min-h-10 bg-gray-800 text-white cursor-pointer disabled:opacity-50"
         >
-          {'Подсказка ' + hintsUsed + '/' + task.hints.length}
+          Проверить
         </button>
+        {allowHints && (
+          <button
+            type="button"
+            onClick={addHint}
+            disabled={hintsUsed >= task.hints.length}
+            className="flex-1 min-h-10 bg-gray-200 cursor-pointer disabled:opacity-50"
+          >
+            {'Подсказка ' + hintsUsed + '/' + task.hints.length}
+          </button>
+        )}
       </div>
-      <HintBox hints={task.hints} used={hintsUsed} />
-      {status === 'bad' && <ResultPanel masterName={scene.mentor.name} voice={badInfo.voice} message={badInfo.message} />}
-      {status === 'ok' && <p className="text-green-700 font-bold m-0">Задание выполнено!</p>}
+      {allowHints && <HintBox hints={task.hints} used={hintsUsed} />}
+      {status === 'bad' && <ResultPanel masterName={masterName} voice={badInfo.voice} message={badInfo.message} />}
+      {status === 'ok' && (
+        <div className="flex flex-col gap-2">
+          <p className="text-green-700 font-bold m-0">Задание выполнено!</p>
+          {onAdvance && (
+            <button
+              type="button"
+              onClick={onAdvance}
+              className="self-start min-h-10 px-4 bg-gray-800 text-white cursor-pointer"
+            >
+              {successLabel}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-export default function CodeTab({ lang, scene, memory }) {
+function TrainingStage({ scene, memory, state, update }) {
+  const idx = state.trainingIndex;
+  const task = scene.training[idx];
+  const isLast = idx === scene.training.length - 1;
+  const workbenchKey = scene.id + '-training-' + idx;
+
+  function handleAdvance() {
+    update((s) => {
+      if (isLast) s.step = 'exam';
+      else s.trainingIndex = idx + 1;
+    });
+  }
+
+  return (
+    <Editor
+      key={workbenchKey}
+      workbenchKey={workbenchKey}
+      task={task}
+      memory={memory}
+      masterName={scene.mentor.name}
+      allowHints
+      successLabel={isLast ? 'Понял — к экзамену' : 'Следующее задание'}
+      onAdvance={handleAdvance}
+    />
+  );
+}
+
+function ExamStage({ scene, memory, state, update }) {
+  const workbenchKey = scene.id + '-exam';
+  const disabled = state.hp <= 0;
+
+  function handleResult(ok) {
+    if (ok) {
+      update((s) => {
+        s.coins += scene.exam.reward.coins;
+        s.step = 'done';
+        if (!s.passedBlocks.includes(scene.landingBlockId)) s.passedBlocks.push(scene.landingBlockId);
+      });
+    } else {
+      update((s) => {
+        s.hp = Math.max(0, s.hp - scene.exam.penalty.hp);
+      });
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      {disabled && (
+        <p className="text-red-700 font-bold m-0">
+          HP на нуле — проверка недоступна. (Восстановление за монеты и мелкий заказ появятся позже.)
+        </p>
+      )}
+      <Editor
+        key={workbenchKey}
+        workbenchKey={workbenchKey}
+        task={scene.exam}
+        memory={memory}
+        masterName={scene.mentor.name}
+        allowHints={false}
+        disabled={disabled}
+        onResult={handleResult}
+      />
+    </div>
+  );
+}
+
+function DoneStage({ scene }) {
+  const line = scene.outro[0];
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="text-green-700 font-bold m-0">Экзамен сдан!</p>
+      {line && (
+        <p className="m-0 text-gray-600">
+          <b>{scene.mentor.name}:</b> «{line.text}»
+        </p>
+      )}
+      <p className="m-0 text-gray-600">Загляни на вкладку «Лендинг» — блок встал на место.</p>
+    </div>
+  );
+}
+
+export default function CodeTab({ lang, scene, memory, state, update }) {
   if (lang === 'css') return <p>Вкладка «CSS» — скоро.</p>;
-  return <HtmlTraining scene={scene} memory={memory} />;
+  if (state.step === 'training') return <TrainingStage scene={scene} memory={memory} state={state} update={update} />;
+  if (state.step === 'exam') return <ExamStage scene={scene} memory={memory} state={state} update={update} />;
+  return <DoneStage scene={scene} />;
 }

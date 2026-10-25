@@ -1,5 +1,19 @@
 import { ART } from '../artAssets.js';
-import { needOne } from '../../engine/textRules.js';
+import { needOne, norm, same } from '../../engine/textRules.js';
+import { ECONOMY } from '../economyConfig.js';
+
+function needParagraphWithBold(body, pText, boldWord) {
+  const ps = [...body.querySelectorAll('p')];
+  if (!ps.length) return 'Не нашёл тег <p>.';
+  if (ps.length > 1) return 'У тебя ' + ps.length + ' тегов <p>, а нужен один.';
+  const p = ps[0];
+  const got = norm(p.textContent);
+  if (!same(got, pText)) return 'В теге <p> должно быть «' + pText + '», а у тебя «' + got + '».';
+  const bolds = [...p.querySelectorAll('b')];
+  if (!bolds.length) return 'Слово «' + boldWord + '» должно быть жирным — заверни его в <b>.';
+  if (bolds.length > 1 || !same(bolds[0].textContent, boldWord)) return 'Жирным должно быть только «' + boldWord + '».';
+  return null;
+}
 
 // Сцена 1 «Ворота». Форма данных закладываем сейчас, содержание (тексты, задания) — в шаге 5.
 export default {
@@ -34,25 +48,60 @@ export default {
 
   training: [
     {
-      task: 'Напечатай вывеску: один тег <h1> со словом «Торг-Хаб».',
+      task: 'Потренируйся на чужой вывеске: один тег <h1> со словом «Лавка зелий».',
       starter: '',
-      target: '<h1>Торг-Хаб</h1>',
+      target: '<h1>Лавка зелий</h1>',
       hints: [
         'Нужен ровно один тег <h1>.',
-        'Внутри тега — слово «Торг-Хаб», больше ничего.',
-        '<h1>Торг-Хаб</h1>',
+        'Внутри тега — слова «Лавка зелий», больше ничего.',
+        '<h1>Лавка зелий</h1>',
       ],
-      rule: (body) => needOne(body, 'h1', 'Торг-Хаб'),
+      rule: (body) => needOne(body, 'h1', 'Лавка зелий'),
+    },
+    {
+      task: 'Теперь абзац: один тег <p> с текстом «Горн гудит день и ночь.»',
+      starter: '',
+      target: '<p>Горн гудит день и ночь.</p>',
+      hints: [
+        'Нужен ровно один тег <p>.',
+        'Внутри тега — текст «Горн гудит день и ночь.»',
+        '<p>Горн гудит день и ночь.</p>',
+      ],
+      rule: (body) => needOne(body, 'p', 'Горн гудит день и ночь.'),
+    },
+    {
+      task:
+        'Собери вывеску целиком: <h1>Пекарня</h1> и под ней <p> с текстом ' +
+        '«Свежий хлеб и тёплые пироги каждое утро.», где слово «хлеб» — жирное (<b>).',
+      starter: '',
+      target: '<h1>Пекарня</h1>\n<p>Свежий <b>хлеб</b> и тёплые пироги каждое утро.</p>',
+      hints: [
+        'Сначала <h1>Пекарня</h1>, потом <p> с текстом целиком.',
+        'Слово «хлеб» заверни в <b>хлеб</b> — остальной текст обычный.',
+        '<h1>Пекарня</h1>\n<p>Свежий <b>хлеб</b> и тёплые пироги каждое утро.</p>',
+      ],
+      rule: (body) =>
+        needOne(body, 'h1', 'Пекарня') ||
+        needParagraphWithBold(body, 'Свежий хлеб и тёплые пироги каждое утро.', 'хлеб'),
     },
   ],
 
   exam: {
-    task: '',
-    prefilled: '',
-    rule: () => null,
-    reward: { coins: 0 },
-    penalty: { hp: 0 },
+    task:
+      'Настоящая вывеска рынка: <h1>Торг-Хаб</h1> и под ней <p> со слоганом ' +
+      '«Лучшие товары со всего света.», где слово «Лучшие» — жирное (<b>).',
+    starter: '',
+    target: '<h1>Торг-Хаб</h1>\n<p><b>Лучшие</b> товары со всего света.</p>',
+    hints: [],
+    rule: (body) =>
+      needOne(body, 'h1', 'Торг-Хаб') ||
+      needParagraphWithBold(body, 'Лучшие товары со всего света.', 'Лучшие'),
+    reward: { coins: ECONOMY.examRewardCoins },
+    penalty: { hp: ECONOMY.examMistakePenaltyHp },
   },
 
-  outro: [],
+  outro: [
+    { speaker: 'mentor', text: 'Вот и вывеска. Ворота отворяются — Торг-Хаб ждёт хозяина.' },
+    { speaker: 'mentor', text: 'Дальше — Красильня: там мы оденем эту вывеску в цвет.' },
+  ],
 };

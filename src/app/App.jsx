@@ -10,25 +10,26 @@ import CodeTab from '../components/tabs/CodeTab.jsx';
 import LandingTab from '../components/tabs/LandingTab.jsx';
 
 export default function App() {
-  const { state, reset } = useGameState();
+  const { state, update, reset } = useGameState();
   const memory = useWorkbenchMemory();
   const [tab, setTab] = useState('mentor');
   const scene = SCENES.find((s) => s.id === state.sceneId).data;
 
-  const lastIntroLine = scene.intro[scene.intro.length - 1];
+  const done = state.step === 'done';
+  const stageLine = done ? scene.outro[0] : scene.intro[scene.intro.length - 1];
 
   return (
     <div className="mx-auto max-w-[520px] p-4">
       <TopBar hp={state.hp} coins={state.coins} onReset={reset} />
       <SceneStage
-        speakerName={lastIntroLine.speaker === 'mentor' ? scene.mentor.name : scene.resident.name}
-        lines={lastIntroLine.text}
+        speakerName={stageLine.speaker === 'mentor' ? scene.mentor.name : scene.resident.name}
+        lines={stageLine.text}
       />
       <TabBar active={tab} onChange={setTab} />
       {tab === 'mentor' && <MentorTab scene={scene} />}
-      {tab === 'html' && <CodeTab lang="html" scene={scene} memory={memory} />}
-      {tab === 'css' && <CodeTab lang="css" scene={scene} memory={memory} />}
-      {tab === 'landing' && <LandingTab />}
+      {tab === 'html' && <CodeTab lang="html" scene={scene} memory={memory} state={state} update={update} />}
+      {tab === 'css' && <CodeTab lang="css" scene={scene} memory={memory} state={state} update={update} />}
+      {tab === 'landing' && <LandingTab passedBlocks={state.passedBlocks} />}
     </div>
   );
 }

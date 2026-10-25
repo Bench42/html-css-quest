@@ -4,7 +4,14 @@ import { ECONOMY } from '../data/economyConfig.js';
 const SAVE_KEY = 'hcq_save_city';
 
 function freshState() {
-  return { sceneId: 'gates', step: 'lesson', hp: ECONOMY.startHp, coins: 0, passedBlocks: [] };
+  return {
+    sceneId: 'gates',
+    step: 'training', // training | exam | done — фаза цикла сцены (вкладку «Наставник» можно смотреть всегда)
+    trainingIndex: 0,
+    hp: ECONOMY.startHp,
+    coins: 0,
+    passedBlocks: [],
+  };
 }
 
 function loadInitial() {
