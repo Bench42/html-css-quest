@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import ShadowPreview from '../common/ShadowPreview.jsx';
 import TagButtons from './TagButtons.jsx';
-import HintBox from './HintBox.jsx';
-import ResultPanel from './ResultPanel.jsx';
+import HintBox from '../common/HintBox.jsx';
+import ResultPanel from '../common/ResultPanel.jsx';
 import ArtPanel from '../art/ArtPanel.jsx';
 import ArtButton from '../art/ArtButton.jsx';
 import { insertTag, exitTag } from '../../engine/editorOps.js';
