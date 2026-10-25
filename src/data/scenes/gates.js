@@ -1,19 +1,6 @@
 import { ART } from '../artAssets.js';
-import { needOne, norm, same } from '../../engine/textRules.js';
+import { needOne, needParagraphWithBold } from '../../engine/textRules.js';
 import { ECONOMY } from '../economyConfig.js';
-
-function needParagraphWithBold(body, pText, boldWord) {
-  const ps = [...body.querySelectorAll('p')];
-  if (!ps.length) return 'Не нашёл тег <p>.';
-  if (ps.length > 1) return 'У тебя ' + ps.length + ' тегов <p>, а нужен один.';
-  const p = ps[0];
-  const got = norm(p.textContent);
-  if (!same(got, pText)) return 'В теге <p> должно быть «' + pText + '», а у тебя «' + got + '».';
-  const bolds = [...p.querySelectorAll('b')];
-  if (!bolds.length) return 'Слово «' + boldWord + '» должно быть жирным — заверни его в <b>.';
-  if (bolds.length > 1 || !same(bolds[0].textContent, boldWord)) return 'Жирным должно быть только «' + boldWord + '».';
-  return null;
-}
 
 // Сцена 1 «Ворота». Форма данных закладываем сейчас, содержание (тексты, задания) — в шаге 5.
 export default {

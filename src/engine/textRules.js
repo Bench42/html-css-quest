@@ -44,6 +44,19 @@ export function needOne(body, tag, text) {
   return null;
 }
 
+export function needParagraphWithBold(body, pText, boldWord) {
+  const ps = [...body.querySelectorAll('p')];
+  if (!ps.length) return 'Не нашёл тег <p>.';
+  if (ps.length > 1) return 'У тебя ' + ps.length + ' тегов <p>, а нужен один.';
+  const p = ps[0];
+  const got = norm(p.textContent);
+  if (!same(got, pText)) return 'В теге <p> должно быть «' + pText + '», а у тебя «' + got + '».';
+  const bolds = [...p.querySelectorAll('b')];
+  if (!bolds.length) return 'Слово «' + boldWord + '» должно быть жирным — заверни его в <b>.';
+  if (bolds.length > 1 || !same(bolds[0].textContent, boldWord)) return 'Жирным должно быть только «' + boldWord + '».';
+  return null;
+}
+
 export function needClass(body, tag, className) {
   const list = [...body.querySelectorAll(tag)];
   if (!list.length) return 'Не нашёл тег <' + tag + '>.';

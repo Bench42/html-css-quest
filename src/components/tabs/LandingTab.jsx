@@ -2,18 +2,19 @@ import ShadowPreview from '../common/ShadowPreview.jsx';
 import { LANDING_BLOCKS } from '../../data/landingBlocks.js';
 
 // Лендинг-раскраска: весь сайт виден сразу. Блок без эталона — серая заглушка «скоро».
-// Эталон на месте, но чёрно-белый (grayscale) — после экзамена сцены (greyedIn).
-// В цвет блок перейдёт позже, когда появится сцена со стилями для него (colored) — пока нет ни одного.
-export default function LandingTab({ passedBlocks }) {
+// Эталон на месте, но чёрно-белый (grayscale) — после экзамена сцены (greyedIn, passedBlocks).
+// В цвет (colored, coloredBlocks) — после сцены, которая одевает этот блок в стиль.
+export default function LandingTab({ passedBlocks, coloredBlocks }) {
   return (
     <div className="flex flex-col gap-2">
       {LANDING_BLOCKS.map((block) => {
-        const greyedIn = passedBlocks.includes(block.id) && Boolean(block.html);
+        const started = passedBlocks.includes(block.id) && Boolean(block.html);
+        const colored = coloredBlocks.includes(block.id) && Boolean(block.css);
         return (
           <div key={block.id} className="border border-gray-300">
-            {greyedIn ? (
-              <div className="grayscale">
-                <ShadowPreview label={block.label} html={block.html} />
+            {started ? (
+              <div className={colored ? '' : 'grayscale'}>
+                <ShadowPreview label={block.label} html={block.html} css={colored ? block.css : undefined} />
               </div>
             ) : (
               <div className="bg-gray-200 text-gray-500 text-sm px-3 py-6 text-center">{block.label} — скоро</div>

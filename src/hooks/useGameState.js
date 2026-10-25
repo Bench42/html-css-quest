@@ -8,9 +8,11 @@ function freshState() {
     sceneId: 'gates',
     step: 'training', // training | exam | done — фаза цикла сцены (вкладку «Наставник» можно смотреть всегда)
     trainingIndex: 0,
+    examPartIndex: 0, // для экзаменов в несколько частей (например HTML-часть, потом CSS-часть)
     hp: ECONOMY.startHp,
     coins: 0,
-    passedBlocks: [],
+    passedBlocks: [], // блок стоит на месте, чёрно-белый (greyedIn)
+    coloredBlocks: [], // блок в цвете (colored) — после сцены, которая его стилизует
   };
 }
 
@@ -40,7 +42,7 @@ export function useGameState() {
 
   function update(mutate) {
     setState((prev) => {
-      const next = { ...prev, passedBlocks: [...prev.passedBlocks] };
+      const next = { ...prev, passedBlocks: [...prev.passedBlocks], coloredBlocks: [...prev.coloredBlocks] };
       mutate(next);
       persist(next);
       return next;

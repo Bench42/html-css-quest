@@ -5,13 +5,27 @@ import HintBox from '../common/HintBox.jsx';
 import ResultPanel from '../common/ResultPanel.jsx';
 import { insertTag, exitTag } from '../../engine/editorOps.js';
 import { judge } from '../../engine/judge.js';
+import { judgeCss } from '../../engine/cssJudge.js';
 import { voiceFor } from '../../engine/voice.js';
 
 const HTML_TAGS = ['h1', 'p', 'b'];
 
-// Общий блок: задание + эталон/превью + textarea + кнопки тегов + подсказки.
+// Задание само говорит, какой вкладке принадлежит: если у него есть task.html
+// (заданная, неизменная разметка) — это CSS-задание, иначе — HTML-задание.
+function modeOf(task) {
+  return task.html ? 'css' : 'html';
+}
+
+// Экзамен — одна часть (как в сцене 1) или несколько по разным вкладкам (scene.exam.html + scene.exam.css,
+// как в сцене 2: сперва повесить class на HTML-вкладке, потом стилизовать на CSS-вкладке).
+function examParts(scene) {
+  if (scene.exam.html && scene.exam.css) return [scene.exam.html, scene.exam.css];
+  return [scene.exam];
+}
+
+// Общий блок: задание + эталон/превью + редактор (textarea) + подсказки.
 // allowHints=false — на экзамене (бесплатных подсказок там нет, покупка за монеты — шаг 10).
-function Editor({ workbenchKey, task, memory, masterName, allowHints, disabled, onResult, successLabel, onAdvance }) {
+function Editor({ workbenchKey, task, mode, memory, masterName, allowHints, disabled, onResult, successLabel, onAdvance }) {
   const initialDraft = memory.getDraft(workbenchKey) ?? task.starter;
   const [code, setCode] = useState(initialDraft);
   const [hintsUsed, setHintsUsed] = useState(memory.getHints(workbenchKey) ?? 0);
@@ -34,7 +48,7 @@ function Editor({ workbenchKey, task, memory, masterName, allowHints, disabled, 
   }, [workbenchKey, memory]);
 
   function handleCheck() {
-    const msg = judge(code, task.rule);
+    const msg = mode === 'css' ? judgeCss(task.html, code, task.rule) : judge(code, task.rule);
     if (msg) {
       setStatus('bad');
       setBadInfo({ message: msg, voice: voiceFor(msg) });
@@ -57,8 +71,17 @@ function Editor({ workbenchKey, task, memory, masterName, allowHints, disabled, 
     <div className="flex flex-col gap-3">
       <p className="text-[15px] m-0">{task.task}</p>
       <div className="grid grid-cols-2 gap-2">
-        <ShadowPreview label="Эталон" html={task.target} />
-        <ShadowPreview label="Твой код" cls={status === 'ok' ? 'ok' : ''} html={code} />
+        {mode === 'css' ? (
+          <>
+            <ShadowPreview label="Эталон" html={task.html} css={task.target} />
+            <ShadowPreview label="Твой код" html={task.html} css={code} cls={status === 'ok' ? 'ok' : ''} />
+          </>
+        ) : (
+          <>
+            <ShadowPreview label="Эталон" html={task.target} />
+            <ShadowPreview label="Твой код" html={code} cls={status === 'ok' ? 'ok' : ''} />
+          </>
+        )}
       </div>
       <textarea
         ref={taRef}
@@ -67,12 +90,14 @@ function Editor({ workbenchKey, task, memory, masterName, allowHints, disabled, 
         autoComplete="off"
         autoCorrect="off"
         aria-label="Код"
-        placeholder="Тапни тег под полем, например <h1>"
+        placeholder={mode === 'css' ? 'Например: .имя { color: ...; }' : 'Тапни тег под полем, например <h1>'}
         defaultValue={code}
         disabled={disabled}
         className="block w-full min-h-[132px] resize-y font-mono text-base bg-gray-100 p-2 disabled:opacity-60"
       />
-      <TagButtons tags={HTML_TAGS} onInsert={(name) => insertTag(taRef.current, name)} onExit={() => exitTag(taRef.current)} />
+      {mode === 'html' && (
+        <TagButtons tags={HTML_TAGS} onInsert={(name) => insertTag(taRef.current, name)} onExit={() => exitTag(taRef.current)} />
+      )}
       <div className="flex gap-2">
         <button
           type="button"
@@ -113,16 +138,28 @@ function Editor({ workbenchKey, task, memory, masterName, allowHints, disabled, 
   );
 }
 
-function TrainingStage({ scene, memory, state, update }) {
+function OtherTabNotice({ mode }) {
+  const label = mode === 'css' ? 'CSS' : 'HTML';
+  return <p className="m-0 text-gray-600">Сейчас работаем на вкладке «{label}» — открой её.</p>;
+}
+
+function TrainingStage({ scene, memory, state, update, lang }) {
   const idx = state.trainingIndex;
   const task = scene.training[idx];
+  const mode = modeOf(task);
+  if (mode !== lang) return <OtherTabNotice mode={mode} />;
+
   const isLast = idx === scene.training.length - 1;
   const workbenchKey = scene.id + '-training-' + idx;
 
   function handleAdvance() {
     update((s) => {
-      if (isLast) s.step = 'exam';
-      else s.trainingIndex = idx + 1;
+      if (isLast) {
+        s.step = 'exam';
+        s.examPartIndex = 0;
+      } else {
+        s.trainingIndex = idx + 1;
+      }
     });
   }
 
@@ -131,6 +168,7 @@ function TrainingStage({ scene, memory, state, update }) {
       key={workbenchKey}
       workbenchKey={workbenchKey}
       task={task}
+      mode={mode}
       memory={memory}
       masterName={scene.mentor.name}
       allowHints
@@ -140,22 +178,38 @@ function TrainingStage({ scene, memory, state, update }) {
   );
 }
 
-function ExamStage({ scene, memory, state, update }) {
-  const workbenchKey = scene.id + '-exam';
+function ExamStage({ scene, memory, state, update, lang }) {
+  const parts = examParts(scene);
+  const idx = Math.min(state.examPartIndex ?? 0, parts.length - 1);
+  const part = parts[idx];
+  const mode = modeOf(part);
+  if (mode !== lang) return <OtherTabNotice mode={mode} />;
+
+  const isLastPart = idx === parts.length - 1;
+  const workbenchKey = scene.id + '-exam-' + idx;
   const disabled = state.hp <= 0;
+  const otherTabLabel = mode === 'html' ? 'CSS' : 'HTML';
 
   function handleResult(ok) {
-    if (ok) {
+    if (ok) return;
+    update((s) => {
+      s.hp = Math.max(0, s.hp - scene.exam.penalty.hp);
+    });
+  }
+
+  function handleAdvance() {
+    if (!isLastPart) {
       update((s) => {
-        s.coins += scene.exam.reward.coins;
-        s.step = 'done';
-        if (!s.passedBlocks.includes(scene.landingBlockId)) s.passedBlocks.push(scene.landingBlockId);
+        s.examPartIndex = idx + 1;
       });
-    } else {
-      update((s) => {
-        s.hp = Math.max(0, s.hp - scene.exam.penalty.hp);
-      });
+      return;
     }
+    update((s) => {
+      s.coins += scene.exam.reward.coins;
+      s.step = 'done';
+      if (!s.passedBlocks.includes(scene.landingBlockId)) s.passedBlocks.push(scene.landingBlockId);
+      if (mode === 'css' && !s.coloredBlocks.includes(scene.landingBlockId)) s.coloredBlocks.push(scene.landingBlockId);
+    });
   }
 
   return (
@@ -168,12 +222,15 @@ function ExamStage({ scene, memory, state, update }) {
       <Editor
         key={workbenchKey}
         workbenchKey={workbenchKey}
-        task={scene.exam}
+        task={part}
+        mode={mode}
         memory={memory}
         masterName={scene.mentor.name}
         allowHints={false}
         disabled={disabled}
         onResult={handleResult}
+        successLabel={isLastPart ? 'Экзамен сдан' : 'Дальше: вкладка ' + otherTabLabel}
+        onAdvance={handleAdvance}
       />
     </div>
   );
@@ -185,17 +242,16 @@ function DoneStage({ scene }) {
       <p className="text-green-700 font-bold m-0">Экзамен сдан!</p>
       {scene.outro.map((line, i) => (
         <p key={i} className="m-0 text-gray-600">
-          <b>{scene.mentor.name}:</b> «{line.text}»
+          <b>{line.speaker === 'mentor' ? scene.mentor.name : scene.resident.name}:</b> «{line.text}»
         </p>
       ))}
-      <p className="m-0 text-gray-600">Загляни на вкладку «Лендинг» — блок встал на место.</p>
+      <p className="m-0 text-gray-600">Загляни на вкладку «Лендинг» — блок обновился.</p>
     </div>
   );
 }
 
 export default function CodeTab({ lang, scene, memory, state, update }) {
-  if (lang === 'css') return <p>Вкладка «CSS» — скоро.</p>;
-  if (state.step === 'training') return <TrainingStage scene={scene} memory={memory} state={state} update={update} />;
-  if (state.step === 'exam') return <ExamStage scene={scene} memory={memory} state={state} update={update} />;
+  if (state.step === 'training') return <TrainingStage scene={scene} memory={memory} state={state} update={update} lang={lang} />;
+  if (state.step === 'exam') return <ExamStage scene={scene} memory={memory} state={state} update={update} lang={lang} />;
   return <DoneStage scene={scene} />;
 }

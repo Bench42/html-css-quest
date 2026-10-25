@@ -1,5 +1,5 @@
 import { ART } from '../artAssets.js';
-import { needOne, needClass } from '../../engine/textRules.js';
+import { needOne, needClass, needParagraphWithBold } from '../../engine/textRules.js';
 import { needColor, needFontFamily } from '../../engine/cssJudge.js';
 import { ECONOMY } from '../economyConfig.js';
 
@@ -102,10 +102,14 @@ export default {
       starter: '<h1>Торг-Хаб</h1>\n<p>Всё для жителей <b>Города Кода</b></p>',
       target: '<h1 class="hero-title">Торг-Хаб</h1>\n<p>Всё для жителей <b>Города Кода</b></p>',
       hints: [],
-      rule: (body) => needOne(body, 'h1', 'Торг-Хаб') || needClass(body, 'h1', 'hero-title'),
+      rule: (body) =>
+        needOne(body, 'h1', 'Торг-Хаб') ||
+        needClass(body, 'h1', 'hero-title') ||
+        needParagraphWithBold(body, 'Всё для жителей Города Кода', 'Города Кода'),
     },
     css: {
       task: 'Одень вывеску: .hero-title { color: #14b8a6; background: #1e293b; font-family: sans-serif; }',
+      html: '<h1 class="hero-title">Торг-Хаб</h1>\n<p>Всё для жителей <b>Города Кода</b></p>',
       starter: '',
       target: '.hero-title {\n  color: #14b8a6;\n  background: #1e293b;\n  font-family: sans-serif;\n}',
       hints: [],
