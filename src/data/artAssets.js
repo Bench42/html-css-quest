@@ -5,4 +5,7 @@ export const ART = {
   gatesOpenBg: '',
   mentorPortrait: '',
   guardPortrait: '',
+  dyerGreyBg: '',
+  dyerColorBg: '',
+  dyerPortrait: '',
 };

@@ -44,6 +44,16 @@ export function needOne(body, tag, text) {
   return null;
 }
 
+export function needClass(body, tag, className) {
+  const list = [...body.querySelectorAll(tag)];
+  if (!list.length) return 'Не нашёл тег <' + tag + '>.';
+  if (list.length > 1) return 'У тебя ' + list.length + ' тегов <' + tag + '>, а нужен один.';
+  if (!list[0].classList.contains(className)) {
+    return 'На <' + tag + '> нет class="' + className + '". Допиши class прямо в открывающем теге.';
+  }
+  return null;
+}
+
 export function needOrder(body) {
   const h = body.querySelector('h1');
   const p = body.querySelector('p');
