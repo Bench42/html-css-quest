@@ -6,7 +6,7 @@ export const LANDING_BLOCKS = [
     id: 'hero',
     label: 'Вывеска и слоган',
     sceneId: 'gates',
-    html: '<h1>Торг-Хаб</h1>\n<p><b>Лучшие</b> товары со всего света.</p>',
+    html: '<h1>Торг-Хаб</h1>\n<p>Всё для жителей <b>Города Кода</b></p>',
   },
   { id: 'about', label: 'О рынке', sceneId: 'square' },
   { id: 'header', label: 'Промо-полоска и меню', sceneId: 'signs' },

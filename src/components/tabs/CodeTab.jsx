@@ -180,15 +180,14 @@ function ExamStage({ scene, memory, state, update }) {
 }
 
 function DoneStage({ scene }) {
-  const line = scene.outro[0];
   return (
     <div className="flex flex-col gap-2">
       <p className="text-green-700 font-bold m-0">Экзамен сдан!</p>
-      {line && (
-        <p className="m-0 text-gray-600">
+      {scene.outro.map((line, i) => (
+        <p key={i} className="m-0 text-gray-600">
           <b>{scene.mentor.name}:</b> «{line.text}»
         </p>
-      )}
+      ))}
       <p className="m-0 text-gray-600">Загляни на вкладку «Лендинг» — блок встал на место.</p>
     </div>
   );

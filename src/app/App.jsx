@@ -16,7 +16,7 @@ export default function App() {
   const scene = SCENES.find((s) => s.id === state.sceneId).data;
 
   const done = state.step === 'done';
-  const stageLine = done ? scene.outro[0] : scene.intro[scene.intro.length - 1];
+  const stageLine = done ? scene.outro[scene.outro.length - 1] : scene.intro[scene.intro.length - 1];
 
   return (
     <div className="mx-auto max-w-[520px] p-4">
@@ -24,6 +24,8 @@ export default function App() {
       <SceneStage
         speakerName={stageLine.speaker === 'mentor' ? scene.mentor.name : scene.resident.name}
         lines={stageLine.text}
+        nextLabel={done ? 'Дальше: Красильня' : undefined}
+        nextDisabled
       />
       <TabBar active={tab} onChange={setTab} />
       {tab === 'mentor' && <MentorTab scene={scene} />}
