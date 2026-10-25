@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Временные файлы и скрипты (не часть проекта)
+.tmp
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
