@@ -14,6 +14,7 @@ function freshState() {
     passedBlocks: [], // блок стоит на месте, чёрно-белый (greyedIn)
     coloredBlocks: [], // блок в цвете (colored) — после сцены, которая его стилизует
     solutions: {}, // принятый код экзамена по сценам: { [sceneId]: { html?: код, css?: код } }
+    introSeen: false, // разовая сценка-пролог перед сценой 1 показана один раз
   };
 }
 

@@ -5,6 +5,7 @@ import { SCENES } from '../data/scenes/index.js';
 import TopBar from '../components/layout/TopBar.jsx';
 import SceneNav from '../components/scene/SceneNav.jsx';
 import SceneStage from '../components/scene/SceneStage.jsx';
+import SceneIntro from '../components/scene/SceneIntro.jsx';
 import TabBar from '../components/tabs/TabBar.jsx';
 import MentorTab from '../components/tabs/MentorTab.jsx';
 import CodeTab from '../components/tabs/CodeTab.jsx';
@@ -36,6 +37,9 @@ export default function App() {
     setTab('mentor');
   }
 
+  // Разовая сценка-пролог перед сценой 1: показывается один раз, вместо обычного экрана.
+  const showIntro = isLiveScene && viewSceneId === 'gates' && !state.introSeen;
+
   const done = state.step === 'done';
   const open = isPastScene || (isLiveScene && done);
   const stageLine = open ? viewScene.outro[viewScene.outro.length - 1] : viewScene.intro[viewScene.intro.length - 1];
@@ -62,33 +66,41 @@ export default function App() {
           setViewSceneId('gates');
         }}
       />
-      {/* Широкий экран: сцена слева (md:grid-cols-[460px_1fr]), вкладки справа. Узкий —
-          без md:grid раскладка остаётся обычной колонкой, сцена на всю ширину. */}
-      <div className="md:grid md:grid-cols-[460px_1fr] md:gap-4 md:items-start">
-        <div className="mb-3 md:mb-0 md:sticky md:top-4">
-          <SceneNav scenes={SCENES} viewSceneId={viewSceneId} currentSceneId={state.sceneId} onChange={setViewSceneId} />
-          <SceneStage
-            backgroundClosed={viewScene.background.closed}
-            backgroundOpen={viewScene.background.open}
-            open={open}
-            residentFullBody={viewScene.resident.fullBody}
-            noviceFullBody={viewScene.novice && viewScene.novice.fullBody}
-            speakerName={speaker.name}
-            speakerPortrait={speaker.portrait}
-            lines={stageLine.text}
-            nextLabel={isLiveScene && done && nextEntry ? 'Дальше: ' + nextEntry.title : undefined}
-            nextDisabled={!nextEntry || nextEntry.locked}
-            onNext={goNext}
-          />
+      {showIntro ? (
+        // Сценка занимает весь экран одна, без вкладок и навигации — пока она не кончится,
+        // отвлекать нечем (это самое начало игры, прошлых сцен для навигации всё равно нет).
+        <div className="mx-auto max-w-[460px]">
+          <SceneIntro scene={viewScene} onDone={() => update((s) => { s.introSeen = true; })} />
         </div>
-        <div>
-          <TabBar active={tab} onChange={setTab} />
-          {tab === 'mentor' && <MentorTab scene={viewScene} />}
-          {tab === 'html' && <CodeTab lang="html" scene={viewScene} memory={memory} state={state} update={update} isLive={isLiveScene} />}
-          {tab === 'css' && <CodeTab lang="css" scene={viewScene} memory={memory} state={state} update={update} isLive={isLiveScene} />}
-          {tab === 'landing' && <LandingTab passedBlocks={state.passedBlocks} coloredBlocks={state.coloredBlocks} />}
+      ) : (
+        /* Широкий экран: сцена слева (md:grid-cols-[460px_1fr]), вкладки справа. Узкий —
+           без md:grid раскладка остаётся обычной колонкой, сцена на всю ширину. */
+        <div className="md:grid md:grid-cols-[460px_1fr] md:gap-4 md:items-start">
+          <div className="mb-3 md:mb-0 md:sticky md:top-4">
+            <SceneNav scenes={SCENES} viewSceneId={viewSceneId} currentSceneId={state.sceneId} onChange={setViewSceneId} />
+            <SceneStage
+              backgroundClosed={viewScene.background.closed}
+              backgroundOpen={viewScene.background.open}
+              open={open}
+              residentFullBody={viewScene.resident.fullBody}
+              noviceFullBody={viewScene.novice && viewScene.novice.fullBody}
+              speakerName={speaker.name}
+              speakerPortrait={speaker.portrait}
+              lines={stageLine.text}
+              nextLabel={isLiveScene && done && nextEntry ? 'Дальше: ' + nextEntry.title : undefined}
+              nextDisabled={!nextEntry || nextEntry.locked}
+              onNext={goNext}
+            />
+          </div>
+          <div>
+            <TabBar active={tab} onChange={setTab} />
+            {tab === 'mentor' && <MentorTab scene={viewScene} />}
+            {tab === 'html' && <CodeTab lang="html" scene={viewScene} memory={memory} state={state} update={update} isLive={isLiveScene} />}
+            {tab === 'css' && <CodeTab lang="css" scene={viewScene} memory={memory} state={state} update={update} isLive={isLiveScene} />}
+            {tab === 'landing' && <LandingTab passedBlocks={state.passedBlocks} coloredBlocks={state.coloredBlocks} />}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
