@@ -1,30 +1,40 @@
 @import "tailwindcss";
 
+/* Шрифты — self-hosted через @fontsource, без интернета в рантайме (woff2 лежат в node_modules).
+   Берём только насечки (веса), которые реально используем, чтобы не грузить лишнее. */
+@import "@fontsource/manrope/400.css";
+@import "@fontsource/manrope/600.css";
+@import "@fontsource/manrope/700.css";
+@import "@fontsource/pixelify-sans/400.css";
+@import "@fontsource/pixelify-sans/700.css";
+
+/* Токены нового стиля «Город Кода» — тёмный пиксель-арт, по макету reference/art/landing/.
+   Старая бежевая палитра таверны отсюда убрана полностью. */
 @theme {
+  --font-display: 'Pixelify Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-body: 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
 
-  --color-canvas: #f1e3c6;
-  --color-panel: #fbf3df;
-  --color-ink: #3b2a1a;
-  --color-muted: #8a7558;
-  --color-line: #b08c5a;
-  --color-accent: #4b9b5c;
-  --color-accent-ink: #ffffff;
-  --color-frame: #8b5a2b;
-  --color-ember: #d98f32;
-  --color-ember-soft: #f5dfb0;
-  --color-ok: #3f8f52;
-  --color-ok-soft: #dff0e1;
-  --color-bad: #b5432f;
-  --color-bad-soft: #f6ddd6;
-  --color-code: #221e1b;
-  --color-code-ink: #f1e6d0;
+  --color-bg: #0b1626;
+  --color-panel: #13293d;
+  --color-panel-soft: #0f2133;
+  --color-border: #2dd4bf;
+  --color-accent: #2dd4bf;
+  --color-primary: #f0a030;
+  --color-primary-ink: #1a1206;
+  --color-text: #eaf2f6;
+  --color-text-muted: #93a4b8;
+  --color-ok: #34d399;
+  --color-ok-soft: #113327;
+  --color-bad: #f87171;
+  --color-bad-soft: #3a1414;
+
+  --radius-game: 0.5rem;
 }
 
 body {
-  background: var(--color-canvas);
-  color: var(--color-ink);
+  background: var(--color-bg);
+  color: var(--color-text);
   font-family: var(--font-body);
   margin: 0;
   padding-block: 12px 40px;
