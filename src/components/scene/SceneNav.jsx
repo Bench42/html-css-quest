@@ -14,7 +14,7 @@ export default function SceneNav({ scenes, viewSceneId, currentSceneId, onChange
         aria-label="Предыдущая сцена"
         disabled={!prevScene}
         onClick={() => prevScene && onChange(prevScene.id)}
-        className="min-h-10 px-3 bg-panel border-2 border-accent text-accent cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+        className="min-h-10 px-3 bg-panel border-2 border-accent text-accent cursor-pointer rounded-game disabled:opacity-40 disabled:cursor-not-allowed"
       >
         <span aria-hidden="true">←</span> <span className="hidden md:inline">{prevScene ? prevScene.title : ''}</span>
       </button>
@@ -26,7 +26,7 @@ export default function SceneNav({ scenes, viewSceneId, currentSceneId, onChange
         aria-label="Следующая сцена"
         disabled={!nextScene}
         onClick={() => nextScene && onChange(nextScene.id)}
-        className="min-h-10 px-3 bg-panel border-2 border-accent text-accent cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+        className="min-h-10 px-3 bg-panel border-2 border-accent text-accent cursor-pointer rounded-game disabled:opacity-40 disabled:cursor-not-allowed"
       >
         <span className="hidden md:inline">{nextScene ? nextScene.title : ''}</span> <span aria-hidden="true">→</span>
       </button>

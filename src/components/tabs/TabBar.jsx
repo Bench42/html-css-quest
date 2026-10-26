@@ -15,7 +15,7 @@ export default function TabBar({ active, onChange }) {
           onClick={() => onChange(tab.id)}
           aria-pressed={active === tab.id}
           className={
-            'flex-1 min-h-10 px-2 py-2 text-sm cursor-pointer border-b-2 ' +
+            'flex-1 min-h-10 px-2 py-2 text-sm cursor-pointer border-b-2 rounded-game ' +
             (active === tab.id ? 'border-accent text-text font-bold' : 'border-transparent text-text-muted')
           }
         >

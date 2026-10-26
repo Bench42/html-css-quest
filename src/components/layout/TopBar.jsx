@@ -11,7 +11,7 @@ export default function TopBar({ hp, coins, onReset }) {
         <button
           type="button"
           onClick={handleClick}
-          className="bg-panel border-2 border-accent text-accent min-h-9 px-2.5 py-1 text-[13px] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="bg-panel border-2 border-accent text-accent min-h-9 px-2.5 py-1 text-[13px] cursor-pointer rounded-game focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           {armed ? 'Точно сбросить?' : 'Начать заново'}
         </button>

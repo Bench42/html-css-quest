@@ -104,7 +104,7 @@ function Editor({ workbenchKey, task, mode, memory, masterName, allowHints, disa
         placeholder={mode === 'css' ? 'Например: .имя { color: ...; }' : 'Тапни тег под полем, например <h1>'}
         defaultValue={code}
         disabled={disabled}
-        className="block w-full min-h-[132px] resize-y font-mono text-base bg-panel-soft text-text border border-border placeholder:text-text-muted p-2 disabled:opacity-60"
+        className="block w-full min-h-[132px] resize-y font-mono text-base bg-panel-soft text-text border border-border rounded-game placeholder:text-text-muted p-2 disabled:opacity-60"
       />
       {mode === 'html' && (
         <TagButtons tags={HTML_TAGS} onInsert={(name) => insertTag(taRef.current, name)} onExit={() => exitTag(taRef.current)} />
@@ -114,7 +114,7 @@ function Editor({ workbenchKey, task, mode, memory, masterName, allowHints, disa
           type="button"
           onClick={handleCheck}
           disabled={disabled}
-          className="flex-[2] min-h-10 bg-primary text-primary-ink cursor-pointer disabled:opacity-50"
+          className="flex-[2] min-h-10 bg-primary text-primary-ink cursor-pointer rounded-game disabled:opacity-50"
         >
           Проверить
         </button>
@@ -123,7 +123,7 @@ function Editor({ workbenchKey, task, mode, memory, masterName, allowHints, disa
             type="button"
             onClick={addHint}
             disabled={hintsUsed >= task.hints.length}
-            className="flex-1 min-h-10 bg-panel border-2 border-accent text-accent cursor-pointer disabled:opacity-50"
+            className="flex-1 min-h-10 bg-panel border-2 border-accent text-accent cursor-pointer rounded-game disabled:opacity-50"
           >
             {'Подсказка ' + hintsUsed + '/' + task.hints.length}
           </button>
@@ -138,7 +138,7 @@ function Editor({ workbenchKey, task, mode, memory, masterName, allowHints, disa
             <button
               type="button"
               onClick={onAdvance}
-              className="self-start min-h-10 px-4 bg-primary text-primary-ink cursor-pointer"
+              className="self-start min-h-10 px-4 bg-primary text-primary-ink cursor-pointer rounded-game"
             >
               {successLabel}
             </button>
