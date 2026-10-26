@@ -30,7 +30,7 @@ export default function SceneStage({
   return (
     <div
       className={
-        'relative overflow-hidden border border-gray-300 min-h-[260px] md:min-h-[360px] flex flex-col justify-start' +
+        'relative overflow-hidden border border-gray-300 aspect-[4/3] flex flex-col justify-start' +
         (hasBg ? '' : ' bg-slate-700') +
         (className ? ' ' + className : '')
       }
@@ -57,16 +57,16 @@ export default function SceneStage({
       )}
 
       {residentFullBody && (
-        <img src={residentFullBody} alt="" className="absolute bottom-0 left-[6%] h-[68%] object-contain" />
+        <img src={residentFullBody} alt="" className="absolute bottom-0 left-[8%] h-[52%] object-contain" />
       )}
       {noviceFullBody && (
-        <img src={noviceFullBody} alt="" className="absolute bottom-0 right-[6%] h-[62%] object-contain" />
+        <img src={noviceFullBody} alt="" className="absolute bottom-0 right-[8%] h-[48%] object-contain" />
       )}
 
       {speakerName && (
-        <div className="relative m-3 max-w-[85%] flex items-start gap-2 bg-white text-gray-900 text-sm px-3 py-2">
-          {speakerPortrait && <img src={speakerPortrait} alt="" className="w-10 h-10 object-cover shrink-0" />}
-          <div>
+        <div className="relative m-2 max-w-[220px] flex items-start gap-1.5 bg-white text-gray-900 text-xs px-2 py-1.5">
+          {speakerPortrait && <img src={speakerPortrait} alt="" className="w-6 h-6 object-cover shrink-0" />}
+          <div className="line-clamp-3">
             <b>{speakerName}:</b> {[].concat(lines).join(' ')}
           </div>
         </div>

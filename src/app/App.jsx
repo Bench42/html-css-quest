@@ -40,11 +40,11 @@ export default function App() {
   }
 
   return (
-    <div className="mx-auto max-w-[520px] md:max-w-[1000px] p-4">
+    <div className="mx-auto max-w-[520px] md:max-w-[1100px] p-4">
       <TopBar hp={state.hp} coins={state.coins} onReset={reset} />
-      {/* Широкий экран: сцена слева (md:grid-cols-[360px_1fr]), вкладки справа. Узкий —
-          без md:grid раскладка остаётся обычной колонкой, как и было. */}
-      <div className="md:grid md:grid-cols-[360px_1fr] md:gap-4 md:items-start">
+      {/* Широкий экран: сцена слева (md:grid-cols-[460px_1fr]), вкладки справа. Узкий —
+          без md:grid раскладка остаётся обычной колонкой, сцена на всю ширину. */}
+      <div className="md:grid md:grid-cols-[460px_1fr] md:gap-4 md:items-start">
         <SceneStage
           backgroundClosed={scene.background.closed}
           backgroundOpen={scene.background.open}
