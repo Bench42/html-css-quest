@@ -154,6 +154,27 @@ function OtherTabNotice({ mode }) {
   return <p className="m-0 text-text-muted">Сейчас работаем на вкладке «{label}» — открой её.</p>;
 }
 
+// Просмотр прошлой сцены: только принятый код экзамена, без редактора и без наград —
+// тренировка сюда не входит, это не часть итогового сайта.
+function ReadOnlySolution({ scene, lang, state }) {
+  const label = lang === 'css' ? 'CSS' : 'HTML';
+  const part = examParts(scene).find((p) => modeOf(p) === lang);
+  if (!part) {
+    return <p className="m-0 text-text-muted">В этой сцене вкладка «{label}» не использовалась.</p>;
+  }
+  const saved = state.solutions[scene.id] && state.solutions[scene.id][lang];
+  if (!saved) {
+    return <p className="m-0 text-text-muted">Код этой сцены не сохранился (пройдена до обновления).</p>;
+  }
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="m-0 text-text-muted">Принятый код — только просмотр:</p>
+      <CodeBlock code={saved} />
+      {lang === 'css' ? <ShadowPreview label="Результат" html={part.html} css={saved} /> : <ShadowPreview label="Результат" html={saved} />}
+    </div>
+  );
+}
+
 function TrainingStage({ scene, memory, state, update, lang }) {
   const idx = state.trainingIndex;
   const task = scene.training[idx];
@@ -269,7 +290,7 @@ function DoneStage({ scene }) {
 }
 
 export default function CodeTab({ lang, scene, memory, state, update, isLive }) {
-  if (!isLive) return <p className="m-0 text-text-muted">Просмотр кода появится в следующем шаге.</p>;
+  if (!isLive) return <ReadOnlySolution scene={scene} lang={lang} state={state} />;
   if (state.step === 'training') return <TrainingStage scene={scene} memory={memory} state={state} update={update} lang={lang} />;
   if (state.step === 'exam') return <ExamStage scene={scene} memory={memory} state={state} update={update} lang={lang} />;
   return <DoneStage scene={scene} />;
