@@ -83,7 +83,6 @@ export default function App() {
               backgroundOpen={viewScene.background.open}
               open={open}
               residentFullBody={viewScene.resident.fullBody}
-              noviceFullBody={viewScene.novice && viewScene.novice.fullBody}
               speakerName={speaker.name}
               speakerPortrait={speaker.portrait}
               lines={stageLine.text}

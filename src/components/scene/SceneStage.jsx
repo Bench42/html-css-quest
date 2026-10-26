@@ -9,7 +9,6 @@ export default function SceneStage({
   backgroundOpen,
   open,
   residentFullBody,
-  noviceFullBody,
   speakerName,
   speakerPortrait,
   lines,
@@ -58,9 +57,6 @@ export default function SceneStage({
 
       {residentFullBody && (
         <img src={residentFullBody} alt="" className="absolute bottom-0 left-[8%] h-[52%] object-contain" />
-      )}
-      {noviceFullBody && (
-        <img src={noviceFullBody} alt="" className="absolute bottom-0 right-[8%] h-[48%] object-contain" />
       )}
 
       {speakerName && (

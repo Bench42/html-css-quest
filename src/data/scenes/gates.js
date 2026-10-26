@@ -10,7 +10,6 @@ export default {
   background: { closed: ART.gatesClosedBg, open: ART.gatesOpenBg },
   mentor: { name: 'Дух Перемен', portrait: ART.mentorPortrait },
   resident: { name: 'Стражник', portrait: ART.guardPortrait, fullBody: ART.guardFull },
-  novice: { fullBody: ART.noviceFull },
 
   // Разовая сценка-пролог (SceneIntro) показывается перед этим вместо обычного экрана —
   // последняя её реплика (стражник про сломанную табличку) закрывает тему, поэтому здесь
