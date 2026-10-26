@@ -39,20 +39,27 @@ export default function App() {
   }
 
   return (
-    <div className="mx-auto max-w-[520px] p-4">
+    <div className="mx-auto max-w-[520px] md:max-w-[1000px] p-4">
       <TopBar hp={state.hp} coins={state.coins} onReset={reset} />
-      <SceneStage
-        speakerName={stageLine.speaker === 'mentor' ? scene.mentor.name : scene.resident.name}
-        lines={stageLine.text}
-        nextLabel={done && nextEntry ? 'Дальше: ' + nextEntry.title : undefined}
-        nextDisabled={!nextEntry || nextEntry.locked}
-        onNext={goNext}
-      />
-      <TabBar active={tab} onChange={setTab} />
-      {tab === 'mentor' && <MentorTab scene={scene} />}
-      {tab === 'html' && <CodeTab lang="html" scene={scene} memory={memory} state={state} update={update} />}
-      {tab === 'css' && <CodeTab lang="css" scene={scene} memory={memory} state={state} update={update} />}
-      {tab === 'landing' && <LandingTab passedBlocks={state.passedBlocks} coloredBlocks={state.coloredBlocks} />}
+      {/* Широкий экран: сцена слева (md:grid-cols-[360px_1fr]), вкладки справа. Узкий —
+          без md:grid раскладка остаётся обычной колонкой, как и было. */}
+      <div className="md:grid md:grid-cols-[360px_1fr] md:gap-4 md:items-start">
+        <SceneStage
+          speakerName={stageLine.speaker === 'mentor' ? scene.mentor.name : scene.resident.name}
+          lines={stageLine.text}
+          nextLabel={done && nextEntry ? 'Дальше: ' + nextEntry.title : undefined}
+          nextDisabled={!nextEntry || nextEntry.locked}
+          onNext={goNext}
+          className="mb-3 md:mb-0 md:sticky md:top-4"
+        />
+        <div>
+          <TabBar active={tab} onChange={setTab} />
+          {tab === 'mentor' && <MentorTab scene={scene} />}
+          {tab === 'html' && <CodeTab lang="html" scene={scene} memory={memory} state={state} update={update} />}
+          {tab === 'css' && <CodeTab lang="css" scene={scene} memory={memory} state={state} update={update} />}
+          {tab === 'landing' && <LandingTab passedBlocks={state.passedBlocks} coloredBlocks={state.coloredBlocks} />}
+        </div>
+      </div>
     </div>
   );
 }
