@@ -9,7 +9,8 @@ export default {
   landingBlockId: 'hero',
   background: { closed: ART.gatesClosedBg, open: ART.gatesOpenBg },
   mentor: { name: 'Дух Перемен', portrait: ART.mentorPortrait },
-  resident: { name: 'Стражник', portrait: ART.guardPortrait },
+  resident: { name: 'Стражник', portrait: ART.guardPortrait, fullBody: ART.guardFull },
+  novice: { fullBody: ART.noviceFull },
 
   intro: [
     { speaker: 'resident', text: 'Стой! Без таблички над воротами Городской Совет чужих не пускает.' },

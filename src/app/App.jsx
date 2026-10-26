@@ -27,6 +27,7 @@ export default function App() {
 
   const done = state.step === 'done';
   const stageLine = done ? scene.outro[scene.outro.length - 1] : scene.intro[scene.intro.length - 1];
+  const speaker = stageLine.speaker === 'mentor' ? scene.mentor : scene.resident;
 
   function goNext() {
     if (!nextEntry || nextEntry.locked) return;
@@ -45,7 +46,13 @@ export default function App() {
           без md:grid раскладка остаётся обычной колонкой, как и было. */}
       <div className="md:grid md:grid-cols-[360px_1fr] md:gap-4 md:items-start">
         <SceneStage
-          speakerName={stageLine.speaker === 'mentor' ? scene.mentor.name : scene.resident.name}
+          backgroundClosed={scene.background.closed}
+          backgroundOpen={scene.background.open}
+          open={done}
+          residentFullBody={scene.resident.fullBody}
+          noviceFullBody={scene.novice && scene.novice.fullBody}
+          speakerName={speaker.name}
+          speakerPortrait={speaker.portrait}
           lines={stageLine.text}
           nextLabel={done && nextEntry ? 'Дальше: ' + nextEntry.title : undefined}
           nextDisabled={!nextEntry || nextEntry.locked}
