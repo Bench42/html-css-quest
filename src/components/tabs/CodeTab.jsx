@@ -268,7 +268,8 @@ function DoneStage({ scene }) {
   );
 }
 
-export default function CodeTab({ lang, scene, memory, state, update }) {
+export default function CodeTab({ lang, scene, memory, state, update, isLive }) {
+  if (!isLive) return <p className="m-0 text-text-muted">Просмотр кода появится в следующем шаге.</p>;
   if (state.step === 'training') return <TrainingStage scene={scene} memory={memory} state={state} update={update} lang={lang} />;
   if (state.step === 'exam') return <ExamStage scene={scene} memory={memory} state={state} update={update} lang={lang} />;
   return <DoneStage scene={scene} />;
