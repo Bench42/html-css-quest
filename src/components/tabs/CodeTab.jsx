@@ -67,7 +67,7 @@ function Editor({ workbenchKey, task, mode, memory, masterName, allowHints, disa
     }
     setStatus('ok');
     setBadInfo(null);
-    onResult && onResult(true);
+    onResult && onResult(true, code);
   }
 
   function addHint() {
@@ -201,10 +201,17 @@ function ExamStage({ scene, memory, state, update, lang }) {
   const disabled = state.hp <= 0;
   const otherTabLabel = mode === 'html' ? 'CSS' : 'HTML';
 
-  function handleResult(ok) {
-    if (ok) return;
+  function handleResult(ok, code) {
+    if (!ok) {
+      update((s) => {
+        s.hp = Math.max(0, s.hp - scene.exam.penalty.hp);
+      });
+      return;
+    }
+    // Принятый код экзамена сохраняем сразу при успехе — пригодится для просмотра
+    // прошлых сцен и для будущей сборки сайта в zip.
     update((s) => {
-      s.hp = Math.max(0, s.hp - scene.exam.penalty.hp);
+      s.solutions = { ...s.solutions, [scene.id]: { ...(s.solutions[scene.id] || {}), [mode]: code } };
     });
   }
 

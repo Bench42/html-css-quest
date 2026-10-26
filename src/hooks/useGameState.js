@@ -13,6 +13,7 @@ function freshState() {
     coins: 0,
     passedBlocks: [], // блок стоит на месте, чёрно-белый (greyedIn)
     coloredBlocks: [], // блок в цвете (colored) — после сцены, которая его стилизует
+    solutions: {}, // принятый код экзамена по сценам: { [sceneId]: { html?: код, css?: код } }
   };
 }
 
@@ -42,7 +43,12 @@ export function useGameState() {
 
   function update(mutate) {
     setState((prev) => {
-      const next = { ...prev, passedBlocks: [...prev.passedBlocks], coloredBlocks: [...prev.coloredBlocks] };
+      const next = {
+        ...prev,
+        passedBlocks: [...prev.passedBlocks],
+        coloredBlocks: [...prev.coloredBlocks],
+        solutions: { ...prev.solutions },
+      };
       mutate(next);
       persist(next);
       return next;
