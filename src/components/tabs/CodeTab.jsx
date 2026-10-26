@@ -79,7 +79,7 @@ function Editor({ workbenchKey, task, mode, memory, masterName, allowHints, disa
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-[15px] m-0">{task.task}</p>
+      <p className="text-[15px] text-text m-0">{task.task}</p>
       {mode === 'css' && <CodeBlock code={task.target} />}
       <div className="grid grid-cols-2 gap-2">
         {mode === 'css' ? (
@@ -104,7 +104,7 @@ function Editor({ workbenchKey, task, mode, memory, masterName, allowHints, disa
         placeholder={mode === 'css' ? 'Например: .имя { color: ...; }' : 'Тапни тег под полем, например <h1>'}
         defaultValue={code}
         disabled={disabled}
-        className="block w-full min-h-[132px] resize-y font-mono text-base bg-gray-100 p-2 disabled:opacity-60"
+        className="block w-full min-h-[132px] resize-y font-mono text-base bg-panel-soft text-text border border-border placeholder:text-text-muted p-2 disabled:opacity-60"
       />
       {mode === 'html' && (
         <TagButtons tags={HTML_TAGS} onInsert={(name) => insertTag(taRef.current, name)} onExit={() => exitTag(taRef.current)} />
@@ -114,7 +114,7 @@ function Editor({ workbenchKey, task, mode, memory, masterName, allowHints, disa
           type="button"
           onClick={handleCheck}
           disabled={disabled}
-          className="flex-[2] min-h-10 bg-gray-800 text-white cursor-pointer disabled:opacity-50"
+          className="flex-[2] min-h-10 bg-primary text-primary-ink cursor-pointer disabled:opacity-50"
         >
           Проверить
         </button>
@@ -123,7 +123,7 @@ function Editor({ workbenchKey, task, mode, memory, masterName, allowHints, disa
             type="button"
             onClick={addHint}
             disabled={hintsUsed >= task.hints.length}
-            className="flex-1 min-h-10 bg-gray-200 cursor-pointer disabled:opacity-50"
+            className="flex-1 min-h-10 bg-panel border-2 border-accent text-accent cursor-pointer disabled:opacity-50"
           >
             {'Подсказка ' + hintsUsed + '/' + task.hints.length}
           </button>
@@ -133,12 +133,12 @@ function Editor({ workbenchKey, task, mode, memory, masterName, allowHints, disa
       {status === 'bad' && <ResultPanel masterName={masterName} voice={badInfo.voice} message={badInfo.message} />}
       {status === 'ok' && (
         <div className="flex flex-col gap-2">
-          <p className="text-green-700 font-bold m-0">Задание выполнено!</p>
+          <p className="text-ok font-bold m-0">Задание выполнено!</p>
           {onAdvance && (
             <button
               type="button"
               onClick={onAdvance}
-              className="self-start min-h-10 px-4 bg-gray-800 text-white cursor-pointer"
+              className="self-start min-h-10 px-4 bg-primary text-primary-ink cursor-pointer"
             >
               {successLabel}
             </button>
@@ -151,7 +151,7 @@ function Editor({ workbenchKey, task, mode, memory, masterName, allowHints, disa
 
 function OtherTabNotice({ mode }) {
   const label = mode === 'css' ? 'CSS' : 'HTML';
-  return <p className="m-0 text-gray-600">Сейчас работаем на вкладке «{label}» — открой её.</p>;
+  return <p className="m-0 text-text-muted">Сейчас работаем на вкладке «{label}» — открой её.</p>;
 }
 
 function TrainingStage({ scene, memory, state, update, lang }) {
@@ -226,7 +226,7 @@ function ExamStage({ scene, memory, state, update, lang }) {
   return (
     <div className="flex flex-col gap-3">
       {disabled && (
-        <p className="text-red-700 font-bold m-0">
+        <p className="text-bad font-bold m-0">
           HP на нуле — проверка недоступна. (Восстановление за монеты и мелкий заказ появятся позже.)
         </p>
       )}
@@ -250,13 +250,13 @@ function ExamStage({ scene, memory, state, update, lang }) {
 function DoneStage({ scene }) {
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-green-700 font-bold m-0">Экзамен сдан!</p>
+      <p className="text-ok font-bold m-0">Экзамен сдан!</p>
       {scene.outro.map((line, i) => (
-        <p key={i} className="m-0 text-gray-600">
+        <p key={i} className="m-0 text-text-muted">
           <b>{line.speaker === 'mentor' ? scene.mentor.name : scene.resident.name}:</b> «{line.text}»
         </p>
       ))}
-      <p className="m-0 text-gray-600">Загляни на вкладку «Лендинг» — блок обновился.</p>
+      <p className="m-0 text-text-muted">Загляни на вкладку «Лендинг» — блок обновился.</p>
     </div>
   );
 }

@@ -33,12 +33,12 @@ export default function ShadowPreview({ label, cls, html, css }) {
     if (userStyleRef.current) userStyleRef.current.textContent = css ? sanitizeCss(css) : '';
   }, [css]);
 
-  const borderCls = cls === 'blue' ? 'border-accent border-dashed' : cls === 'ok' ? 'border-ok' : 'border-line';
-  const labelCls = cls === 'blue' ? 'text-accent' : cls === 'ok' ? 'text-ok' : 'text-muted';
+  const borderCls = cls === 'blue' ? 'border-accent border-dashed' : cls === 'ok' ? 'border-ok' : 'border-border';
+  const labelCls = cls === 'blue' ? 'text-accent' : cls === 'ok' ? 'text-ok' : 'text-text-muted';
 
   return (
     <div className={'border-2 overflow-hidden bg-panel min-w-0 ' + borderCls}>
-      {label && <div className={'font-mono text-[11px] px-2 py-1 border-b-2 border-line ' + labelCls}>{label}</div>}
+      {label && <div className={'font-mono text-[11px] px-2 py-1 border-b-2 border-border ' + labelCls}>{label}</div>}
       <div className="block" ref={hostRef} />
     </div>
   );

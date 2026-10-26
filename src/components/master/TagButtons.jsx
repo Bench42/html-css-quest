@@ -7,7 +7,7 @@ export default function TagButtons({ tags, onInsert, onExit }) {
           type="button"
           aria-label={'Вставить тег ' + name}
           onClick={() => onInsert(name)}
-          className="font-mono min-h-10 min-w-[52px] px-3 py-1.5 bg-panel text-ink border-2 border-line cursor-pointer focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+          className="font-mono min-h-10 min-w-[52px] px-3 py-1.5 bg-panel text-text border-2 border-border cursor-pointer focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
         >
           {'<' + name + '>'}
         </button>
@@ -15,7 +15,7 @@ export default function TagButtons({ tags, onInsert, onExit }) {
       <button
         type="button"
         onClick={onExit}
-        className="font-mono min-h-10 min-w-[52px] px-3 py-1.5 bg-panel text-ink border-2 border-line cursor-pointer focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+        className="font-mono min-h-10 min-w-[52px] px-3 py-1.5 bg-panel text-text border-2 border-border cursor-pointer focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
       >
         ↵ выйти
       </button>

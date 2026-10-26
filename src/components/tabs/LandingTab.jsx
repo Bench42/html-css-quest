@@ -11,13 +11,13 @@ export default function LandingTab({ passedBlocks, coloredBlocks }) {
         const started = passedBlocks.includes(block.id) && Boolean(block.html);
         const colored = coloredBlocks.includes(block.id) && Boolean(block.css);
         return (
-          <div key={block.id} className="border border-gray-300">
+          <div key={block.id} className="border border-border">
             {started ? (
               <div className={colored ? '' : 'grayscale'}>
                 <ShadowPreview label={block.label} html={block.html} css={colored ? block.css : undefined} />
               </div>
             ) : (
-              <div className="bg-gray-200 text-gray-500 text-sm px-3 py-6 text-center">{block.label} — скоро</div>
+              <div className="bg-panel-soft text-text-muted text-sm px-3 py-6 text-center">{block.label} — скоро</div>
             )}
           </div>
         );

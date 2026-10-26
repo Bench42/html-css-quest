@@ -20,7 +20,7 @@ export default function MentorTab({ scene }) {
           <ShadowPreview label="Как это выглядит" html={ex.code} css={ex.css} />
           <CodeBlock code={ex.code} />
           {ex.css && <CodeBlock code={ex.css} />}
-          {ex.note && <p className="m-0 text-gray-600">{ex.note}</p>}
+          {ex.note && <p className="m-0 text-text-muted">{ex.note}</p>}
         </div>
       ))}
     </div>

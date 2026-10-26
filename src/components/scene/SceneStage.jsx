@@ -30,8 +30,8 @@ export default function SceneStage({
   return (
     <div
       className={
-        'relative overflow-hidden border border-gray-300 aspect-[4/3] flex flex-col justify-start' +
-        (hasBg ? '' : ' bg-slate-700') +
+        'relative overflow-hidden border border-border aspect-[4/3] flex flex-col justify-start' +
+        (hasBg ? '' : ' bg-panel') +
         (className ? ' ' + className : '')
       }
     >
@@ -64,9 +64,9 @@ export default function SceneStage({
       )}
 
       {speakerName && (
-        <div className="relative m-2 max-w-[220px] flex items-start gap-1.5 bg-white text-gray-900 text-xs px-2 py-1.5">
-          {speakerPortrait && <img src={speakerPortrait} alt="" className="w-6 h-6 object-cover shrink-0" />}
-          <div className="line-clamp-3">
+        <div className="relative m-2 max-w-[78%] md:max-w-[340px] max-h-28 md:max-h-36 overflow-y-auto flex items-start gap-2 bg-panel text-text text-xs px-2 py-1.5 border border-border">
+          {speakerPortrait && <img src={speakerPortrait} alt="" className="w-10 h-10 object-cover shrink-0" />}
+          <div>
             <b>{speakerName}:</b> {[].concat(lines).join(' ')}
           </div>
         </div>
@@ -77,7 +77,7 @@ export default function SceneStage({
           type="button"
           onClick={onNext}
           disabled={nextDisabled}
-          className="relative self-end mt-auto m-3 min-h-9 px-3 py-1.5 text-sm bg-white text-gray-900 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+          className="relative self-end mt-auto m-3 min-h-9 px-3 py-1.5 text-sm bg-primary text-primary-ink disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
         >
           {nextLabel}
           {nextDisabled && ' (скоро)'}
