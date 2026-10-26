@@ -15,7 +15,10 @@ export default function ShadowPreview({ label, cls, html, css }) {
     if (!host || host.shadowRoot) return; // защита от повторного attachShadow в StrictMode
     const root = host.attachShadow({ mode: 'open' });
     root.innerHTML =
-      '<style>:host{display:block}.page{box-sizing:border-box;padding:10px 12px;min-height:92px;background:#fff;color:#14181f;font:16px/1.45 "Times New Roman",Times,serif;overflow:auto;overflow-wrap:anywhere;position:relative}</style>' +
+      '<style>:host{display:block;height:100%}' +
+      '.page{box-sizing:border-box;padding:10px 12px;height:100%;min-height:92px;background:#fff;color:#14181f;' +
+      'font:14px/1.5 "Times New Roman",Times,serif;overflow:auto;overflow-wrap:break-word;position:relative}' +
+      '.page h1{font-size:1.5em}</style>' +
       '<style class="user-css"></style><div class="page"></div>';
     const page = root.querySelector('.page');
     page.addEventListener('click', (e) => {
@@ -37,9 +40,9 @@ export default function ShadowPreview({ label, cls, html, css }) {
   const labelCls = cls === 'blue' ? 'text-accent' : cls === 'ok' ? 'text-ok' : 'text-text-muted';
 
   return (
-    <div className={'border-2 overflow-hidden bg-panel min-w-0 ' + borderCls}>
-      {label && <div className={'font-mono text-[11px] px-2 py-1 border-b-2 border-border ' + labelCls}>{label}</div>}
-      <div className="block" ref={hostRef} />
+    <div className={'border-2 overflow-hidden bg-panel min-w-0 flex flex-col ' + borderCls}>
+      {label && <div className={'font-mono text-[11px] px-2 py-1 border-b-2 border-border shrink-0 ' + labelCls}>{label}</div>}
+      <div className="block flex-1 min-h-[92px]" ref={hostRef} />
     </div>
   );
 }
