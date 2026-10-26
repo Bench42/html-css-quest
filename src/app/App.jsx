@@ -54,7 +54,14 @@ export default function App() {
 
   return (
     <div className="mx-auto max-w-[520px] md:max-w-[1100px] p-4">
-      <TopBar hp={state.hp} coins={state.coins} onReset={reset} />
+      <TopBar
+        hp={state.hp}
+        coins={state.coins}
+        onReset={() => {
+          reset();
+          setViewSceneId('gates');
+        }}
+      />
       {/* Широкий экран: сцена слева (md:grid-cols-[460px_1fr]), вкладки справа. Узкий —
           без md:grid раскладка остаётся обычной колонкой, сцена на всю ширину. */}
       <div className="md:grid md:grid-cols-[460px_1fr] md:gap-4 md:items-start">
